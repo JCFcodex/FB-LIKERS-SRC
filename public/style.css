@@ -28,7 +28,7 @@ body {
   border-color: #343a40;
 }
 
-/* Custom styles for How to Use modal */
+/* MODAL */
 
 .modal-content {
   background-color: #f8f9fa;
@@ -86,7 +86,7 @@ video {
   margin: 0 10px;
 }
 
-/* Custom styles for footer */
+/* FOOTER */
 footer {
   background-color: #343a40;
   color: #fff;
