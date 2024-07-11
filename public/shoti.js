@@ -1,1 +1,84 @@
-const apiUrl="/api/fetchTikTokVideo";let autoNextEnabled=!1,isLoading=!1;async function fetchTikTokVideo(){try{const e=await axios.post(apiUrl);if(200!==e.status)throw new Error("Failed to fetch video");const{videoUrl:t,title:n,region:o,username:d,nickname:i}=e.data,a=document.getElementById("tiktokVideo"),c=document.getElementById("videoTitle"),l=document.getElementById("region"),s=document.getElementById("username"),k=document.getElementById("nickname");a.src=t,c.textContent=n,l.textContent=`Region: ${o}`,s.textContent=`Username: ${d}`,k.textContent=`Nickname: ${i}`,a.addEventListener("loadedmetadata",(()=>{isLoading=!1,document.getElementById("nextButton").disabled=!1})),autoNextEnabled&&a.addEventListener("ended",(()=>{isLoading||fetchAndDisplayTikTokVideo()}))}catch(e){console.error("Error fetching TikTok video:",e),fetchAndDisplayTikTokVideo()}}function fetchAndDisplayTikTokVideo(){isLoading=!0,document.getElementById("nextButton").disabled=!0,fetchTikTokVideo()}document.addEventListener("DOMContentLoaded",(()=>{const e=document.getElementById("nextButton"),t=document.getElementById("autoNextButton");e.addEventListener("click",fetchAndDisplayTikTokVideo),t.addEventListener("click",(()=>{autoNextEnabled=!autoNextEnabled,t.textContent="Auto Next: "+(autoNextEnabled?"ON":"OFF"),autoNextEnabled&&!isLoading&&fetchAndDisplayTikTokVideo()})),fetchAndDisplayTikTokVideo()}));
+const apiUrl = '/api/fetchTikTokVideo';
+let autoNextEnabled = false;
+let isLoading = false;
+let isFailed = false;
+
+document.addEventListener('DOMContentLoaded', () => {
+  const nextButton = document.getElementById('nextButton');
+  const autoNextButton = document.getElementById('autoNextButton');
+  const refreshButton = document.getElementById('refreshButton');
+
+  refreshButton.addEventListener('click', async () => {
+    if (isFailed) {
+      fetchAndDisplayTikTokVideo();
+    }
+  });
+
+  nextButton.addEventListener('click', fetchAndDisplayTikTokVideo);
+
+  autoNextButton.addEventListener('click', () => {
+    autoNextEnabled = !autoNextEnabled;
+    autoNextButton.textContent = `Auto Next: ${autoNextEnabled ? 'ON' : 'OFF'}`;
+
+    if (autoNextEnabled && !isLoading) {
+      fetchAndDisplayTikTokVideo();
+    }
+  });
+
+  refreshButton.disabled = true;
+  fetchAndDisplayTikTokVideo();
+});
+
+async function fetchTikTokVideo() {
+  const refreshButton = document.getElementById('refreshButton');
+  refreshButton.disabled = true;
+
+  try {
+    const response = await axios.post(apiUrl);
+
+    if (response.status !== 200) {
+      throw new Error('Failed to fetch video');
+    }
+
+    const { videoUrl, title, region, username, nickname } = response.data;
+
+    const videoElement = document.getElementById('tiktokVideo');
+    const videoTitleElement = document.getElementById('videoTitle');
+    const regionElement = document.getElementById('region');
+    const usernameElement = document.getElementById('username');
+    const nicknameElement = document.getElementById('nickname');
+
+    videoElement.src = videoUrl;
+    videoTitleElement.textContent = title;
+    regionElement.textContent = `Region: ${region}`;
+    usernameElement.textContent = `Username: ${username}`;
+    nicknameElement.textContent = `Nickname: ${nickname}`;
+
+    videoElement.addEventListener('loadedmetadata', () => {
+      isLoading = false;
+      isFailed = false;
+      document.getElementById('nextButton').disabled = false;
+      refreshButton.disabled = true;
+    });
+
+    if (autoNextEnabled) {
+      videoElement.addEventListener('ended', () => {
+        if (!isLoading) {
+          fetchAndDisplayTikTokVideo();
+        }
+      });
+    }
+  } catch (error) {
+    console.error('Error fetching TikTok video:', error);
+    isFailed = true;
+    isLoading = false;
+    refreshButton.disabled = false;
+  }
+}
+
+function fetchAndDisplayTikTokVideo() {
+  isLoading = true;
+  document.getElementById('nextButton').disabled = true;
+  document.getElementById('refreshButton').disabled = true;
+  fetchTikTokVideo();
+}
