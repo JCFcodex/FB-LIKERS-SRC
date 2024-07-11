@@ -1,0 +1,45 @@
+body {
+  font-family: 'Poppins', sans-serif;
+  min-height: 100vh;
+}
+
+#submitLoadingMessage,
+#loginLoadingMessage {
+  font-style: italic;
+  margin-top: 10px;
+}
+
+#responseMessage {
+  margin-top: 20px;
+  padding: 10px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  text-align: left;
+  white-space: pre-wrap;
+}
+
+#howToUseButton,
+#savedButton,
+#leaderboardButton {
+  padding-inline: 1rem;
+  margin: 0.5rem;
+}
+
+#termsCheckbox {
+  border-color: #343a40;
+}
+
+footer {
+  background-color: #343a40;
+  color: #fff;
+  padding: 20px 0;
+}
+
+hr {
+  height: 2px;
+  background-color: black;
+}
+
+a {
+  color: #61a1fe;
+}
